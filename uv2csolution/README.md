@@ -20,15 +20,6 @@ may demonstrate additional features of Keil Studio.
 2. Right-click the `wizard.uvprojx` file and choose **Convert µVision project to CMSIS solution**.
 3. Edit the generated `wizard.csolution.yml` and `wizard.cproject.yml` as follows:
 
-   - In `wizard.csolution.yml`, insert the following block in `- target-types\- type` section:
-  
-     ```yml
-          target-set:
-            - set: 
-              debugger:
-                name: ST-LINK
-     ```
-
    - In `wizard.csolution.yml`, insert the following block before the `- projects` section:
   
      ```yml
@@ -60,10 +51,32 @@ may demonstrate additional features of Keil Studio.
 ### Step 2: Configure Debugging
 
 1. Open the GUI view and add the Arm GNU Toolchain to `vcpkg_configuration.json` if not already present. Save the file.
-2. Navigate to **CMSIS View → Manage Solution Settings → Run and Debug**. Click the drop-down arrow to create a new
-   **Debug Configuration**.
-3. Select **STLink@pyOCD (launch)**. This will generate a `.vscode/launch.json` and a `.vscode/tasks.json` file:  
-   ![Add the ST-Link adapter using pyOCD](./img/AddST-LINKLaunchConfig.png)
+2. Navigate to **CMSIS View → Manage Solution Settings → Run and Debug**. Click **+ Add New** to create a new
+   debug configuration.
+3. Select **CMSIS Debugger: pyOCD**. This will generate a `.vscode/launch.json` file.
+4. In the **Explorer View**, go to `out/wizard/Target_1`, right-click `wizard.hex`, and choose **Copy Relative Path**.
+5. In the `.vscode/launch.json` file, update the `load` command (around line 15) to include:
+
+   ```json
+   "load out/wizard/Target_1/wizard.hex",
+   ```
+
+6. Open the `cbuild-run.yml` file and modify the `system-resources:` node:
+
+   - For all RAM entries, ensure:
+
+     ```yml
+             access: rwx
+     ```
+
+   - For all ROM entries, ensure:
+
+     ```yml
+             access: rx
+     ```
+
+> [!Note]
+> This step will be automated in a future version of CMSIS-Toolbox.
 
 ### Step 3: Open a Serial Terminal
 
@@ -74,7 +87,7 @@ may demonstrate additional features of Keil Studio.
 
 ### Step 4: Start the Debug Session
 
-1. Switch to the **Debug View** and select **STLink@pyOCD (launch)**.
+1. Switch to the **Debug View** and select **CMSIS Debugger: pyOCD**.
 2. Click the **Play** icon to launch the debug session.  
    ![Starting a debug session](./img/DebugView.png)
 
